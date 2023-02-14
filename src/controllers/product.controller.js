@@ -18,14 +18,16 @@ const getProduct = async (req, res) => {
   res.status(OK_STATUS).json(message);
 };
 
-const createProduct = async (req, res) => {
-  const { name } = req.body;
-  
-  const { type, message } = await productService.createProduct(name);
+const createProduct = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const { type, message } = await productService.createProduct(name);
+    if (type) return res.status(mapError(type)).json({ message });
 
-  if (type) return res.status(mapError(type)).json({ message });
-
-  res.status(CREATED_STATUS).json(message);
+    res.status(CREATED_STATUS).json(message);
+  } catch (error) {
+    return next(error);
+  }
 };
 
 module.exports = { getAllProducts, getProduct, createProduct };

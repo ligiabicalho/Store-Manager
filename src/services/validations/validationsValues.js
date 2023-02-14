@@ -8,7 +8,8 @@ const validateId = (id) => {
 };
 
 const validateNameProduct = (name) => { 
-  const { error } = nameSchema.validate(name);
+  const { error } = nameSchema.validate({ name });
+
   if (error) return { type: 'INVALID_VALUE', message: error.message };
   
   return { type: null, message: '' };

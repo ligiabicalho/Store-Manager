@@ -20,15 +20,11 @@ const getById = async (productId) => {
 const insert = async (product) => {
   // por ora, recebe apenas 1 dado, mas poderá escalar para mais.
   const column = Object.keys(snakeize(product)).join();
-  console.log('product', product);
-  console.log('column', column);
 
   const placeholder = Object.keys(product)
     .map((_key) => '?')
     .join(', ');
 
-  console.log('placeholder', placeholder);
-  console.log('values product', ...Object.values(product));
   const [{ insertId }] = await connection.execute(
     `INSERT INTO StoreManager.products (${column}) VALUE (${placeholder})`,
     [...Object.values(product)],
