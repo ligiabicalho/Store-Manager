@@ -1,5 +1,5 @@
 const isRequered = (fieldValue, next, value) => {
-  if (!fieldValue) {
+  if (fieldValue === undefined) {
     return next({
       status: 400,
       message: `"${value}" is required`,
