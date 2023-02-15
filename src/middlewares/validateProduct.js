@@ -3,22 +3,23 @@ const { productService } = require('../services');
 const { mapError } = require('../utils/httpStatus');
 
 const validateName = (req, _res, next) => {
-const { name } = req.body;
+  console.log('validateName body', req.body);
+  const { name } = req.body;
+  isRequered(name, next, 'name');
 
-isRequered(name, next, 'name');
-
-return next();
+  return next();
 };
 
-const validateProductId = async (req, res, next) => {
+const validateProductId = async (req, _res, next) => {
   const { body } = req;
   body.map((item) => isRequered(item.productId, next, 'productId'));
+
   await Promise.all(body.map(async (item) => {
     const { type, message } = await productService.getById(item.productId);
     if (type) return next({ status: mapError(type), message });
   })); 
 
-return next();
+  return next();
 };
 
 module.exports = { validateName, validateProductId };

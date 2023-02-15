@@ -1,7 +1,7 @@
 const { idSchema, nameSchema, quantSchema } = require('./schemas');
 
 const validateId = (id) => {
-  const { error } = idSchema.validate(id);
+  const { error } = idSchema.validate({ id });
   if (error) return { type: 'INVALID_VALUE', message: error.message };
   
   return { type: null, message: '' };

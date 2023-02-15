@@ -24,10 +24,17 @@ const createSale = async (itemsSold) => {
   });
   if (error.type) return error;
   
-  const id = await saleModel.insertSale();
-  await Promise.all(itemsSold.map((item) => saleModel.insertSaleProducts(id, item))); 
-
-  return { type: null, message: { id, itemsSold } };
+  const newSaleId = await saleModel.insertSale();
+  await Promise.all(itemsSold.map((item) => saleModel.insertSaleProducts(newSaleId, item)));
+  const newSale = await saleModel.getById(newSaleId);
+  newSale.map((sale) => delete sale.date);
+  return {
+    type: null,
+    message: {
+      id: newSaleId,
+      itemsSold: newSale,
+    },
+  };
 };
   
 module.exports = { getAll, getById, createSale };

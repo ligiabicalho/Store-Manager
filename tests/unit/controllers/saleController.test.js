@@ -5,13 +5,13 @@ const sinonChai = require('sinon-chai');
 const { expect } = chai;
 chai.use(sinonChai);
 
-const { productService } = require('../../../src/services');
-const { productController } = require('../../../src/controllers');
-const { allProducts } = require('../mocks/product.mock');
+const { saleService } = require('../../../src/services');
+const { saleController } = require('../../../src/controllers');
+const { allSales } = require('../mocks/sale.mock');
 
-describe('Teste de unidade da camada Controller de produtos', function () {
-  describe('Listagem de produtos', function () {
-    it('retorna status 200 e a lista completa de produtos', async function () {
+describe('Teste de unidade da camada Controller de vendas', function () {
+  describe('Listagem de vendas', function () {
+    it('retorna status 200 e a lista completa de vendas', async function () {
       // arrange
       const res = {};
       const req = {};
@@ -19,18 +19,18 @@ describe('Teste de unidade da camada Controller de produtos', function () {
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns();
       sinon
-        .stub(productService, 'getAll')
-        .resolves({ type: null, message: allProducts });
+        .stub(saleService, 'getAll')
+        .resolves({ type: null, message: allSales });
 
       // act
-      await productController.getAllProducts(req, res);
+      await saleController.getAllSales(req, res);
 
       // assert
       expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(allProducts);
+      expect(res.json).to.have.been.calledWith(allSales);
     });
   });
-  describe('Busca de um produto específico', function () {
+  describe('Busca de uma venda específica', function () {
     it('retorna status 200 e os dados do banco quando existir', async function () {
       // Arrange
       const res = {};
@@ -41,15 +41,15 @@ describe('Teste de unidade da camada Controller de produtos', function () {
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns();
       sinon
-        .stub(productService, 'getById')
-        .resolves({ type: null, message: allProducts[0] });
+        .stub(saleService, 'getById')
+        .resolves({ type: null, message: allSales[0] });
 
       // Act
-      await productController.getProduct(req, res);
+      await saleController.getSale(req, res);
 
       // Assert
       expect(res.status).to.have.been.calledWith(200);
-      expect(res.json).to.have.been.calledWith(allProducts[0]);
+      expect(res.json).to.have.been.calledWith(allSales[0]);
     });
 
     it('retorna um erro caso receba um ID inválido', async function () {
@@ -62,11 +62,11 @@ describe('Teste de unidade da camada Controller de produtos', function () {
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns();
       sinon
-        .stub(productService, 'getById')
+        .stub(saleService, 'getById')
         .resolves({ type: 'INVALID_VALUE', message: '"id" must be a number' });
 
       // Act
-      await productController.getProduct(req, res);
+      await saleController.getSale(req, res);
 
       // Assert
       expect(res.status).to.have.been.calledWith(422); 
@@ -83,11 +83,11 @@ describe('Teste de unidade da camada Controller de produtos', function () {
       res.status = sinon.stub().returns(res);
       res.json = sinon.stub().returns();
       sinon
-        .stub(productService, 'getById')
+        .stub(saleService, 'getById')
         .resolves({ type: 'NOT_FOUND', message: 'Product not found' });
 
       // Act
-      await productController.getProduct(req, res);
+      await saleController.getSale(req, res);
 
       // Assert
       expect(res.status).to.have.been.calledWith(404); 

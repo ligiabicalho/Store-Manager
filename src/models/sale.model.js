@@ -21,7 +21,6 @@ const getById = async (saleId) => {
     WHERE s.id  = ?`,
     [saleId],
   );
-  console.log('getById', camelize(sale));
   return camelize(sale);
 };
 
@@ -36,10 +35,9 @@ const insertSaleProducts = async (saleId, itemsSold) => {
       `INSERT INTO StoreManager.sales_products (sale_id, ${columns}) VALUE (?, ${placeholders})`,
       [saleId, ...Object.values(itemsSold)],
     );
-    console.log('result:', result);
     return result;
   } catch (err) {
-    console.error(`Erro ao inserir em sales_products: ${err.message}`);
+    console.error(`Erro ao inserir na tabela sales_products: ${err.message}`);
   }
 };
 
@@ -50,7 +48,7 @@ const insertSale = async () => {
     );
     return insertId;
   } catch (err) {
-    console.error(`Erro ao inserir em sales_products: ${err.message}`);
+    console.error(`Erro ao inserir na tabela sales: ${err.message}`);
   }
 };
 
