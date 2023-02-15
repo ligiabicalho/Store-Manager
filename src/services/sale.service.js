@@ -23,17 +23,17 @@ const createSale = async (itemsSold) => {
     return error;
   });
   if (error.type) return error;
-  
   const newSaleId = await saleModel.insertSale();
   await Promise.all(itemsSold.map((item) => saleModel.insertSaleProducts(newSaleId, item)));
   const newSale = await saleModel.getById(newSaleId);
-  newSale.map((sale) => delete sale.date);
+  const saleWithoutDate = newSale.map((sale) => {
+    const objSale = { ...sale };
+    delete objSale.date;
+    return objSale;
+  });
   return {
     type: null,
-    message: {
-      id: newSaleId,
-      itemsSold: newSale,
-    },
+    message: { id: newSaleId, itemsSold: saleWithoutDate },
   };
 };
   

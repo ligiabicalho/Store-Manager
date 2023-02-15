@@ -79,15 +79,16 @@ describe('Testes de unidade da camada Service de vendas', function () {
       expect(result.message).to.equal('"quantity" must be greater than or equal to 1');
     });
     it('retorna dados da venda cadastrada com sucesso', async function () {
-      // // arrange
-      // sinon.stub(saleModel, 'insertSale').resolves(saleCreateResponse.id);
-      // sinon.stub(saleModel, 'getById').resolves(saleById);
-      // // act
-      // const result = await saleService.createSale(saleCreateResponse.itemsSold);
+      // arrange
+      sinon.stub(saleModel, 'insertSale').resolves(saleCreateResponse.id);
+      sinon.stub(saleModel, 'getById').resolves(saleById);
+      // act
+      const result = await saleService.createSale(saleCreateResponse.itemsSold);
       
-      // // assert
-      // expect(result.type).to.equal(null);
-      // expect(result.message).to.equal(saleCreateResponse);
+      // assert
+      expect(result.type).to.equal(null);
+      // expect compara objetos: usar o deep!!
+      expect(result.message).to.be.deep.equal(saleCreateResponse);
     });
   });
   afterEach(function () {
