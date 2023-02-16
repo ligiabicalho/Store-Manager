@@ -28,18 +28,19 @@ const createSale = async (itemsSold) => {
     await saleModel.insertSaleProducts(newSaleId, item);
     return item;
   }));
-  // código refatorado 
-  // const newSale = await saleModel.getById(newSaleId);
-  // const saleWithoutDate = newSale.map((sale) => {
-  // não é adequado alterar diretamente o parâmetro: delete sale.date
-  //   const objSale = { ...sale }; 
-  //   delete objSale.date;
-  //   return objSale;
-  // });
   return {
     type: null,
     message: { id: newSaleId, itemsSold: insertedSale },
   };
 };
+
+const deleteSale = async (saleId) => {
+  const notFound = await getById(saleId);
+  if (notFound.type) return notFound;
+
+  await saleModel.deleteSale(saleId);
+
+  return { type: null, message: '' };
+};
   
-module.exports = { getAll, getById, createSale };
+module.exports = { getAll, getById, createSale, deleteSale };

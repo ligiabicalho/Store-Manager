@@ -1,5 +1,5 @@
 const { saleService } = require('../services');
-const { mapError, OK_STATUS, CREATED_STATUS } = require('../utils/httpStatus');
+const { mapError, OK_STATUS, CREATED_STATUS, NO_CONTENT_STATUS } = require('../utils/httpStatus');
 
 const getAllSales = async (_req, res) => {
   const { type, message } = await saleService.getAll();
@@ -30,4 +30,16 @@ const createSale = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllSales, getSale, createSale };
+const deleteSale = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { type, message } = await saleService.deleteSale(id);
+    if (type) return res.status(mapError(type)).json({ message });
+
+    res.status(NO_CONTENT_STATUS).json();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = { getAllSales, getSale, createSale, deleteSale };
