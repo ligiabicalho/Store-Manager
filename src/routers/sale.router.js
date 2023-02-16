@@ -1,6 +1,8 @@
 const express = require('express');
 const { saleController } = require('../controllers');
-const { isRequiredQuantity, isRequiredProductId, validateExistProducts } = require('../middlewares/validateSale');
+const { isRequiredQuantity,
+  isRequiredProductId,
+  validateExistProducts } = require('../middlewares/validateSale');
 
 const router = express.Router();
 
@@ -11,7 +13,7 @@ router.get('/:id', saleController.getSale);
 router.post('/',
   isRequiredQuantity,
   isRequiredProductId,
-  // validateExistProducts,
+  validateExistProducts,
   saleController.createSale);
 
 router.delete('/:id', saleController.deleteSale);

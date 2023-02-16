@@ -1,6 +1,6 @@
 const { saleModel } = require('../models');
 const schema = require('./validations/validationsValues');
-const { productService } = require('.');
+// const { productService } = require('.');
 
 const getAll = async () => {
   const sales = await saleModel.getAll();
@@ -17,23 +17,23 @@ const getById = async (saleId) => {
   return { type: null, message: sale };
 };
 
-const validateExistProducts = async (items) => {
-  console.log('exist validate', items);
-  const result = await Promise.all(items.map(async (item) => {
-  console.log('exist validate map', item);
-      const { type, message } = await productService.getById(item.productId);
-      if (type) return { status: type, message };
-  })); 
-  console.log('result', result);
-  return { type: null, message: '' };
-};
+// const validateExistProducts = async (items) => {
+//   console.log('exist validate', items);
+//   const result = await Promise.all(items.map(async (item) => {
+//   console.log('exist validate map', item);
+//       const { type, message } = await productService.getById(item.productId);
+//       if (type) return { status: type, message };
+//   })); 
+//   console.log('result', result);
+//   return { type: null, message: '' };
+// };
 
 const createSale = async (itemsSold) => {
   const invalidQuantity = schema.validateQuantitys(itemsSold);
   if (invalidQuantity.type) return invalidQuantity;
   
-// não funciona chamando aqui no server, so como middleware router. ??
-  const notFoundProduct = validateExistProducts(itemsSold);
+  // não funciona chamando aqui no server, so como middleware router. ??
+  // const notFoundProduct = validateExistProducts(itemsSold);
   // if (notFoundProduct.type) return notFoundProduct;
 
   const newSaleId = await saleModel.insertSale();

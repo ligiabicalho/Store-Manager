@@ -1,5 +1,5 @@
 const { idSchema, nameSchema, quantSchema } = require('./schemas');
-const { productService } = require('../index');
+// const { productService } = require('../index');
 
 const validateId = (id) => {
   const { error } = idSchema.validate({ id });
@@ -33,7 +33,7 @@ const validateQuantitys = (itemsSold) => {
   return { type: null, message: '' };
 };
 
-// não funciona chamando no server, so como middleware router. ??
+  // não funciona chamando no server, so como middleware router. ??
 // const validateExistProducts = async (items) => {
 //   console.log('exist validate', items);
 //   const result = await Promise.all(items.map(async (item) => {
