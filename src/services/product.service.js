@@ -21,10 +21,18 @@ const createProduct = async (name) => {
   if (error.type) return error;
 
   // envia objeto com apenas 1 dado, mas poderá escalar.
-  const newProductId = await productModel.insert({ name });
-  const newProduct = await productModel.getById(newProductId);
+  const newProduct = await productModel.insertProduct({ name });
 
   return { type: null, message: newProduct };
 };
+
+const updateProduct = async (productId, newName) => {
+  const error = schema.validateNameProduct(newName);
+  if (error.type) return error;
+
+  const upProduct = await productModel.updateProduct(productId, newName);
+
+  return { type: null, message: upProduct };
+};
   
-module.exports = { getAll, getById, createProduct };
+module.exports = { getAll, getById, createProduct, updateProduct };

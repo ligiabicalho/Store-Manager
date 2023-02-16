@@ -35,8 +35,9 @@ describe('Testes de unidade da camada Model de vendas', function () {
       expect(id).to.be.deep.equal(saleCreateResponse.id);
     });
     it('Cadastrando uma venda na tabela sales com erro', async function () {
-      // Arrange // caso de erro: problema no banco de dados
-      sinon.stub(connection, 'execute').resolves([]);
+      // Arrange // caso de erro: problema no banco de dados -> ql é a melhor maneira de testar isso?
+      const error = 'Erro ao inserir na tabela sales: Cannot read properties of undefined(reading "insertId")';
+      sinon.stub(connection, 'execute').resolves(error);
       // Act //
       const result = await saleModel.insertSale();
       // Assert
@@ -45,12 +46,14 @@ describe('Testes de unidade da camada Model de vendas', function () {
     });
     it('Cadastrando uma venda na tabela sales_products com erro', async function () {
       // Arrange
-      sinon.stub(connection, 'execute').resolves([saleCreateResponse]);
-      // Act // caso de erro: faltando 1 parâmetro
-      const result = await saleModel.insertSaleProducts(rightSaleBody);
+      const error = 'Erro ao inserir na tabela sales_products: Cannot convert undefined or null to object';
+      sinon.stub(connection, 'execute').resolves(error);
+      // Act // caso de erro: faltando 1 parâmetro -> faz sentido testar isso nessa camada?
+      const wrongId = null;
+      const result = await saleModel.insertSaleProducts(wrongId, rightSaleBody);
       // Assert
       // expect error -> consultar!
-      expect(result).to.be.deep.equal(undefined);
+      expect(result).to.be.deep.equal('E');
     });
     it('Cadastrando uma venda na tabela sales_products com sucesso', async function () {
       // Arrange

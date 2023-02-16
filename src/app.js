@@ -13,13 +13,9 @@ app.get('/', (_request, response) => {
 app.use('/products', productRouter);
 app.use('/sales', saleRouter);
 
-app.use((error, _req, _res, next) => {
-  console.error('Error:', error);
-  next(error);
-});
-
 app.use((error, _req, res, _next) => {
   const { status, message } = error;
+  console.error('Error:', error);
   return res.status(status || SERVER_ERR).json({ message });
 });
 

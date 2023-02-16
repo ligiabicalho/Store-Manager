@@ -1,4 +1,4 @@
-const isRequered = (fieldValue, next, value) => {
+const isRequired = (fieldValue, next, value) => {
   if (fieldValue === undefined) {
     return next({
       status: 400,
@@ -7,4 +7,4 @@ const isRequered = (fieldValue, next, value) => {
   }
 };
 
-module.exports = isRequered;
+module.exports = isRequired;

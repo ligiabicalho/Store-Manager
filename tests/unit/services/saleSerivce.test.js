@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const connection = require('../../../src/models/connection');
 const { saleService } = require('../../../src/services');
 const { saleModel } = require('../../../src/models');
 const { allSales,
@@ -61,7 +62,9 @@ describe('Testes de unidade da camada Service de vendas', function () {
 
   describe('Cadastrando uma venda', function () {
     it('retorna um erro caso quantity seja zero', async function () {
-      // arrange: Especificamente nesse it não temos um arranjo.
+      // arrange: ESTÁ PASSANDO ESSE ERRO, DO CATCH DA MODEL
+      // const error = `Erro ao inserir na tabela sales_products: Cannot add or update a child row: a foreign key constraint fails ("StoreManager"."sales_products", CONSTRAINT "sales_products_ibfk_1" FOREIGN KEY ("sale_id") REFERENCES "sales" ("id") ON DELETE CASCADE)`;
+      // sinon.stub(connection, 'execute').resolves(error)
       // act
       const result = await saleService.createSale(wrongZeroQuantityBody);
       
@@ -70,7 +73,9 @@ describe('Testes de unidade da camada Service de vendas', function () {
       expect(result.message).to.equal('"quantity" must be greater than or equal to 1');
     });
     it('retorna um erro caso quantity seja negativo', async function () {
-      // arrange: Especificamente nesse it não temos um arranjo.
+      // arrange: ESTÁ PASSANDO ESSE ERRO, DO CATCH DA MODEL.
+      // const error = `Erro ao inserir na tabela sales_products: Cannot add or update a child row: a foreign key constraint fails ("StoreManager"."sales_products", CONSTRAINT "sales_products_ibfk_1" FOREIGN KEY ("sale_id") REFERENCES "sales" ("id") ON DELETE CASCADE)`;
+      // sinon.stub(connection, 'execute').resolves(error)
       // act
       const result = await saleService.createSale(wrongNegativeQuantityBody);
       

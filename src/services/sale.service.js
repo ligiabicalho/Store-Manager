@@ -24,16 +24,21 @@ const createSale = async (itemsSold) => {
   });
   if (error.type) return error;
   const newSaleId = await saleModel.insertSale();
-  await Promise.all(itemsSold.map((item) => saleModel.insertSaleProducts(newSaleId, item)));
-  const newSale = await saleModel.getById(newSaleId);
-  const saleWithoutDate = newSale.map((sale) => {
-    const objSale = { ...sale };
-    delete objSale.date;
-    return objSale;
-  });
+  const insertedSale = await Promise.all(itemsSold.map(async (item) => {
+    await saleModel.insertSaleProducts(newSaleId, item);
+    return item;
+  }));
+  // código refatorado 
+  // const newSale = await saleModel.getById(newSaleId);
+  // const saleWithoutDate = newSale.map((sale) => {
+  // não é adequado alterar diretamente o parâmetro: delete sale.date
+  //   const objSale = { ...sale }; 
+  //   delete objSale.date;
+  //   return objSale;
+  // });
   return {
     type: null,
-    message: { id: newSaleId, itemsSold: saleWithoutDate },
+    message: { id: newSaleId, itemsSold: insertedSale },
   };
 };
   

@@ -21,7 +21,7 @@ const getById = async (saleId) => {
     WHERE s.id  = ?`,
     [saleId],
   );
-  return camelize(sale);
+  return camelize(sale); // retorna [{date, productId, quantity}]
 };
 
 const insertSaleProducts = async (saleId, itemsSold) => {
@@ -31,11 +31,13 @@ const insertSaleProducts = async (saleId, itemsSold) => {
       .map((_key) => '?')
       .join(', ');
 
-    const [result] = await connection.execute(
+    await connection.execute(
       `INSERT INTO StoreManager.sales_products (sale_id, ${columns}) VALUE (?, ${placeholders})`,
       [saleId, ...Object.values(itemsSold)],
     );
-    return result;
+    // INSERT retorna obj com dados da execução, dentre eles chave inserId e affectedRows.
+    const newSaleProducts = getById(saleId);
+    return newSaleProducts; 
   } catch (err) {
     console.error(`Erro ao inserir na tabela sales_products: ${err.message}`);
   }

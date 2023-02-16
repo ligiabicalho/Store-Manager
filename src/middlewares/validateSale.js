@@ -1,10 +1,24 @@
-const isRequered = require('../utils/isRequired');
+const isRequired = require('../utils/isRequired');
+const { productService } = require('../services');
+const { mapError } = require('../utils/httpStatus');
 
-const validateQuantity = (req, _res, next) => {
+const isRequiredQuantity = (req, _res, next) => {
   const { body } = req;
-  body.map((item) => isRequered(item.quantity, next, 'quantity'));
+  body.map((item) => isRequired(item.quantity, next, 'quantity'));
 
 return next();
 };
 
-module.exports = { validateQuantity };
+const isRequiredAndExistProductId = async (req, _res, next) => {
+  const { body } = req;
+  body.map((item) => isRequired(item.productId, next, 'productId'));
+
+  await Promise.all(body.map(async (item) => {
+    const { type, message } = await productService.getById(item.productId);
+    if (type) return next({ status: mapError(type), message });
+  })); 
+
+  return next();
+};
+
+module.exports = { isRequiredQuantity, isRequiredAndExistProductId };
