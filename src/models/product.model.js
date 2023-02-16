@@ -34,7 +34,7 @@ const insertProduct = async (product) => { // { name }
   return newProduct; // { id, name }
 };
 
-const getByName = async (productName) => {
+const getByName = async (productName) => { // não foi necessário usar.
   const [[product]] = await connection.execute(
     'SELECT * FROM StoreManager.products WHERE name = ?',
     [productName],
@@ -51,4 +51,12 @@ const updateProduct = async (productId, newName) => {
   return newProduct;
 };
 
-module.exports = { getAll, getById, insertProduct, updateProduct, getByName };
+const deleteProduct = async (productId) => {
+  await connection.execute(
+    'DELETE FROM StoreManager.products WHERE id = ?',
+    [productId],
+  );
+  // return true; // precisa de retorno?
+};
+
+module.exports = { getAll, getById, insertProduct, updateProduct, getByName, deleteProduct };

@@ -1,5 +1,6 @@
 const OK_STATUS = 200;
 const CREATED_STATUS = 201;
+const NO_CONTENT_STATUS = 204;
 const SERVER_ERR = 500;
 
 const errorMap = {
@@ -15,5 +16,6 @@ module.exports = {
   mapError,
   OK_STATUS,
   CREATED_STATUS,
+  NO_CONTENT_STATUS,
   SERVER_ERR,
 };

@@ -1,5 +1,5 @@
 const { productService } = require('../services');
-const { mapError, OK_STATUS, CREATED_STATUS } = require('../utils/httpStatus');
+const { mapError, OK_STATUS, CREATED_STATUS, NO_CONTENT_STATUS } = require('../utils/httpStatus');
 
 const getAllProducts = async (_req, res) => {
   const { type, message } = await productService.getAll();
@@ -43,4 +43,16 @@ const updateProduct = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllProducts, getProduct, createProduct, updateProduct };
+const deleteProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { type, message } = await productService.deleteProduct(id);
+    if (type) return res.status(mapError(type)).json({ message });
+
+    res.status(NO_CONTENT_STATUS).json(); // sem o json() quebra, pq??
+  } catch (error) {
+    return next(error);
+  }
+};
+
+module.exports = { getAllProducts, getProduct, createProduct, updateProduct, deleteProduct };

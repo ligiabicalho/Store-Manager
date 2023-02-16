@@ -27,12 +27,24 @@ const createProduct = async (name) => {
 };
 
 const updateProduct = async (productId, newName) => {
-  const error = schema.validateNameProduct(newName);
-  if (error.type) return error;
+  const notFound = await getById(productId);
+  if (notFound.type) return notFound;
+  
+  const invalidName = schema.validateNameProduct(newName);
+  if (invalidName.type) return invalidName;
 
   const upProduct = await productModel.updateProduct(productId, newName);
 
   return { type: null, message: upProduct };
 };
+
+const deleteProduct = async (productId) => {
+  const notFound = await getById(productId);
+  if (notFound.type) return notFound;
+
+  await productModel.deleteProduct(productId);
+
+  return { type: null, message: '' }; // precisa de manter a chave message?
+};
   
-module.exports = { getAll, getById, createProduct, updateProduct };
+module.exports = { getAll, getById, createProduct, updateProduct, deleteProduct };
