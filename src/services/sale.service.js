@@ -1,5 +1,6 @@
 const { saleModel } = require('../models');
 const schema = require('./validations/validationsValues');
+const { productService } = require('.');
 
 const getAll = async () => {
   const sales = await saleModel.getAll();
@@ -16,14 +17,27 @@ const getById = async (saleId) => {
   return { type: null, message: sale };
 };
 
+const validateExistProducts = async (items) => {
+  console.log('exist validate', items);
+  const result = await Promise.all(items.map(async (item) => {
+  console.log('exist validate map', item);
+      const { type, message } = await productService.getById(item.productId);
+      if (type) return { status: type, message };
+  })); 
+  console.log('result', result);
+  return { type: null, message: '' };
+};
+
 const createSale = async (itemsSold) => {
-  let error = '';
-  itemsSold.map((item) => {
-    error = schema.validateQuantity(item.quantity);
-    return error;
-  });
-  if (error.type) return error;
+  const invalidQuantity = schema.validateQuantitys(itemsSold);
+  if (invalidQuantity.type) return invalidQuantity;
+  
+// não funciona chamando aqui no server, so como middleware router. ??
+  const notFoundProduct = validateExistProducts(itemsSold);
+  // if (notFoundProduct.type) return notFoundProduct;
+
   const newSaleId = await saleModel.insertSale();
+
   const insertedSale = await Promise.all(itemsSold.map(async (item) => {
     await saleModel.insertSaleProducts(newSaleId, item);
     return item;
@@ -42,5 +56,23 @@ const deleteSale = async (saleId) => {
 
   return { type: null, message: '' };
 };
+
+const updateSale = async (saleId, itemsUpdate) => {
+  const notFoundSale = await getById(saleId);
+  if (notFoundSale.type) return notFoundSale;
+
+  const invalidQuantity = schema.validateQuantitys(itemsUpdate);
+  if (invalidQuantity.type) return invalidQuantity;
+
+  // const notFoundProduct = schema.validateExistProducts(itemsUpdate);
+  // if (notFoundProduct.type) return notFoundProduct;
+
+  const itemsUpdated = await Promise.all(itemsUpdate.map(async (item) => {
+    await saleModel.updateSale(saleId, item);
+    return item;
+  }));
+  console.log('service up', saleId, itemsUpdated);
+  return { type: null, message: { saleId, itemsUpdated } };
+};
   
-module.exports = { getAll, getById, createSale, deleteSale };
+module.exports = { getAll, getById, createSale, deleteSale, updateSale };

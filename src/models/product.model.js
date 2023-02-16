@@ -42,10 +42,10 @@ const getByName = async (productName) => { // não foi necessário usar.
   return camelize(product); // { id, name }
 };
 
-const updateProduct = async (productId, newName) => {
+const updateProduct = async (productId, updateName) => {
   await connection.execute(
     'UPDATE StoreManager.products SET name = ? WHERE id = ?',
-    [newName, productId],
+    [updateName, productId],
   );
   const newProduct = await getById(productId);
   return newProduct;

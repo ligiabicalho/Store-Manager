@@ -26,7 +26,7 @@ const getById = async (saleId) => {
 
 const insertSaleProducts = async (saleId, itemsSold) => {
   try { 
-    const columns = Object.keys(snakeize(itemsSold)).join(', ');
+    const columns = Object.keys(snakeize(itemsSold)).join(', '); // pra usar assim, tem q ter boa validação.
     const placeholders = Object.keys(itemsSold)
       .map((_key) => '?')
       .join(', ');
@@ -61,4 +61,13 @@ const deleteSale = async (saleId) => {
   );
 };
 
-module.exports = { getAll, getById, insertSale, insertSaleProducts, deleteSale };
+const updateSale = async (saleId, updateItem) => {
+  await connection.execute(
+    'UPDATE StoreManager.sales_products SET quantity = ?  WHERE sale_id = ? AND product_id = ?',
+    [updateItem.quantity, saleId, updateItem.productId],
+  );
+  const upSale = await getById(saleId);
+  return upSale;
+};
+
+module.exports = { getAll, getById, insertSale, insertSaleProducts, deleteSale, updateSale };

@@ -26,14 +26,14 @@ const createProduct = async (name) => {
   return { type: null, message: newProduct };
 };
 
-const updateProduct = async (productId, newName) => {
+const updateProduct = async (productId, updateName) => {
   const notFound = await getById(productId);
   if (notFound.type) return notFound;
   
-  const invalidName = schema.validateNameProduct(newName);
+  const invalidName = schema.validateNameProduct(updateName);
   if (invalidName.type) return invalidName;
 
-  const upProduct = await productModel.updateProduct(productId, newName);
+  const upProduct = await productModel.updateProduct(productId, updateName);
 
   return { type: null, message: upProduct };
 };
