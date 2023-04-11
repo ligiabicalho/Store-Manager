@@ -1,6 +1,4 @@
-const isRequired = require('../utils/isRequired');
-const { productService } = require('../services');
-const { mapError } = require('../utils/httpStatus');
+const isRequired = require('./isRequired');
 
 const isRequiredQuantity = (req, _res, next) => {
   const { body } = req;
@@ -13,24 +11,19 @@ const isRequiredProductId = async (req, _res, next) => {
   const { body } = req;
   body.map((item) => isRequired(item.productId, next, 'productId'));
 
-  // por ser regra de negócio, melhor q esteja no service. ?
-  // await Promise.all(body.map(async (item) => {
-  //   const { type, message } = await productService.getById(item.productId);
-  //   if (type) return next({ status: mapError(type), message });
-  // })); 
-
   return next();
 };
 
-// não roda se for uma validação no service. ?
-const validateExistProducts = async (req, _res, next) => {
-  const items = req.body;
+// Validate Exist Products: REGRA DE NEGÓCIO -> saleService
 
-  await Promise.all(items.map(async (item) => {
-      const { type, message } = await productService.getById(item.productId);
-      if (type) return next({ status: mapError(type), message });
-  })); 
-  return next();
-};
+// const validateExistProducts = async (req, _res, next) => {
+//   const items = req.body;
 
-module.exports = { isRequiredQuantity, isRequiredProductId, validateExistProducts };
+//   await Promise.all(items.map(async (item) => {
+//       const { type, message } = await productService.getById(item.productId);
+//       if (type) return next({ status: mapError(type), message });
+//   })); 
+//   return next();
+// };
+
+module.exports = { isRequiredQuantity, isRequiredProductId };

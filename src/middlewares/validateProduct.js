@@ -1,4 +1,4 @@
-const isRequired = require('../utils/isRequired');
+const isRequired = require('./isRequired');
 
 const isRequiredName = (req, _res, next) => {
   const { name } = req.body;

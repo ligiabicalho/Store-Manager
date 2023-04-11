@@ -49,7 +49,6 @@ const updateSale = async (req, res, next) => {
     const { type, message } = await saleService.updateSale(id, itemsUpdate);
     if (type) return res.status(mapError(type)).json({ message });
 
-    console.log('controller', message);
     res.status(OK_STATUS).json(message);
   } catch (error) {
     return next(error);

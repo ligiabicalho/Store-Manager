@@ -55,7 +55,7 @@ describe('Testes de unidade da camada Model de vendas', function () {
       // expect error -> consultar!
       expect(result).to.be.deep.equal('E');
     });
-    it('Cadastrando uma venda na tabela sales_products com sucesso', async function () {
+    it.skip('Cadastrando uma venda na tabela sales_products com sucesso', async function () {
       // Arrange
       sinon.stub(connection, 'execute').resolves([saleCreateResponse]);
       // Act

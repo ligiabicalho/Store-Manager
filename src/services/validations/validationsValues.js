@@ -1,5 +1,4 @@
 const { idSchema, nameSchema, quantSchema } = require('./schemas');
-// const { productService } = require('../index');
 
 const validateId = (id) => {
   const { error } = idSchema.validate({ id });
@@ -33,15 +32,19 @@ const validateQuantitys = (itemsSold) => {
   return { type: null, message: '' };
 };
 
-  // não funciona chamando no server, so como middleware router. ??
-// const validateExistProducts = async (items) => {
-//   console.log('exist validate', items);
-//   const result = await Promise.all(items.map(async (item) => {
-//   console.log('exist validate map', item);
-//       const { type, message } = await productService.getById(item.productId);
-//       if (type) return { status: type, message };
-//   })); 
-//   console.log('result', result);
+  /* VALIDATE EXIST PRODUCT / getProductsById:
+  -não funciona chamando neste arquivo, apenas no saleSales, pq ?? 
+    -não é um schema, está validando dados do banco de dados!
+    -o productService importa tb o schema, isso gera um tipo de "loop"/dependência q não deixa o arquivo terminar de ser criado, desse modo productService.getById 'is not a function'
+  "Função recursiva" -  Resolvido com ajuda do Zambelli */
+
+//   const validateExistProducts = async (items) => {
+//   const errors = await Promise.all(items.map(async (item) => {
+//     const notFound = await productService.getById(item.productId); // retorna { type, message }
+//     if (notFound.type) return 'error';
+//   }));
+
+//   if (errors.some((e) => e === 'error')) return { type: 'NOT_FOUND', message: 'Product not found' };
 //   return { type: null, message: '' };
 // };
 

@@ -24,23 +24,13 @@ const getById = async (saleId) => {
   return camelize(sale); // retorna [{date, productId, quantity}]
 };
 
-const insertSaleProducts = async (saleId, itemsSold) => {
-  try { 
-    const columns = Object.keys(snakeize(itemsSold)).join(', '); // pra usar assim, tem q ter boa validação.
-    const placeholders = Object.keys(itemsSold)
-      .map((_key) => '?')
-      .join(', ');
-
-    await connection.execute(
-      `INSERT INTO StoreManager.sales_products (sale_id, ${columns}) VALUE (?, ${placeholders})`,
-      [saleId, ...Object.values(itemsSold)],
-    );
-    // INSERT retorna obj com dados da execução, dentre eles chave inserId e affectedRows.
-    const newSaleProducts = getById(saleId);
-    return newSaleProducts; 
-  } catch (err) {
-    console.error(`Erro ao inserir na tabela sales_products: ${err.message}`);
-  }
+const getBySaleIdProductId = async (saleId, productId) => {
+  const [saleProduct] = await connection.execute(
+    `SELECT sp.product_id, sp.quantity FROM StoreManager.sales_products AS sp 
+    WHERE sp.sale_id = ? AND sp.product_id = ?`,
+    [saleId, productId],
+  );
+  return camelize(saleProduct); // retorna [{ productId, quantity}]
 };
 
 const insertSale = async () => {
@@ -51,6 +41,23 @@ const insertSale = async () => {
     return insertId;
   } catch (err) {
     console.error(`Erro ao inserir na tabela sales: ${err.message}`);
+  }
+};
+
+const insertSaleProducts = async (saleId, itemsSold) => {
+  try { 
+    const columns = Object.keys(snakeize(itemsSold)).join(', '); // pra usar assim, tem q ter boa validação.
+    const placeholders = Object.keys(itemsSold)
+      .map((_key) => '?').join(', ');
+    await connection.execute(
+      `INSERT INTO StoreManager.sales_products (sale_id, ${columns}) VALUE (?, ${placeholders})`,
+      [saleId, ...Object.values(itemsSold)],
+    ); // INSERT retorna obj com dados da execução, dentre eles chave inserId e affectedRows.
+    const [newSaleProduct] = await getBySaleIdProductId(saleId, itemsSold.productId);
+
+    return newSaleProduct; 
+  } catch (err) {
+    console.error(`Erro ao inserir na tabela sales_products: ${err.message}`);
   }
 };
 
@@ -66,7 +73,7 @@ const updateSale = async (saleId, updateItem) => {
     'UPDATE StoreManager.sales_products SET quantity = ?  WHERE sale_id = ? AND product_id = ?',
     [updateItem.quantity, saleId, updateItem.productId],
   );
-  const upSale = await getById(saleId);
+  const [upSale] = await getBySaleIdProductId(saleId, updateItem.productId);
   return upSale;
 };
 

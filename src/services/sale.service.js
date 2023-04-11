@@ -1,6 +1,6 @@
 const { saleModel } = require('../models');
 const schema = require('./validations/validationsValues');
-// const { productService } = require('.');
+const productService = require('./product.service');
 
 const getAll = async () => {
   const sales = await saleModel.getAll();
@@ -17,31 +17,29 @@ const getById = async (saleId) => {
   return { type: null, message: sale };
 };
 
-// const validateExistProducts = async (items) => {
-//   console.log('exist validate', items);
-//   const result = await Promise.all(items.map(async (item) => {
-//   console.log('exist validate map', item);
-//       const { type, message } = await productService.getById(item.productId);
-//       if (type) return { status: type, message };
-//   })); 
-//   console.log('result', result);
-//   return { type: null, message: '' };
-// };
+// validateExistProducts
+const getProductsById = async (items) => {
+  const errors = await Promise.all(items.map(async (item) => {
+    const notFound = await productService.getById(item.productId); // retorna { type, message }
+    if (notFound.type) return 'error';
+  }));
+
+  if (errors.some((e) => e === 'error')) return { type: 'NOT_FOUND', message: 'Product not found' };
+  return { type: null, message: '' };
+};
 
 const createSale = async (itemsSold) => {
   const invalidQuantity = schema.validateQuantitys(itemsSold);
   if (invalidQuantity.type) return invalidQuantity;
   
-  // não funciona chamando aqui no server, so como middleware router. ??
-  // const notFoundProduct = validateExistProducts(itemsSold);
-  // if (notFoundProduct.type) return notFoundProduct;
+  const notFoundProduct = await getProductsById(itemsSold); /* não é um schema, acessa bd */ 
+  console.log('CREATE SALE SERVICE notFoundProduct', notFoundProduct);
+  if (notFoundProduct.type) return notFoundProduct;
 
   const newSaleId = await saleModel.insertSale();
+  const insertedSale = await Promise.all(itemsSold.map((item) =>
+    saleModel.insertSaleProducts(newSaleId, item)));
 
-  const insertedSale = await Promise.all(itemsSold.map(async (item) => {
-    await saleModel.insertSaleProducts(newSaleId, item);
-    return item;
-  }));
   return {
     type: null,
     message: { id: newSaleId, itemsSold: insertedSale },
@@ -64,14 +62,11 @@ const updateSale = async (saleId, itemsUpdate) => {
   const invalidQuantity = schema.validateQuantitys(itemsUpdate);
   if (invalidQuantity.type) return invalidQuantity;
 
-  // const notFoundProduct = schema.validateExistProducts(itemsUpdate);
-  // if (notFoundProduct.type) return notFoundProduct;
+  const notFoundProduct = await getProductsById(itemsUpdate);
+  if (notFoundProduct.type) return notFoundProduct;
 
-  const itemsUpdated = await Promise.all(itemsUpdate.map(async (item) => {
-    await saleModel.updateSale(saleId, item);
-    return item;
-  }));
-  console.log('service up', saleId, itemsUpdated);
+  const itemsUpdated = await Promise.all(itemsUpdate.map((item) =>
+    saleModel.updateSale(saleId, item)));
   return { type: null, message: { saleId, itemsUpdated } };
 };
   
